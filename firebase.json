@@ -1,0 +1,14 @@
+{
+  "hosting": {
+    "site": "propuesta-zia",
+    "public": "public",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "headers": [
+      {
+        "source": "**/*.html",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=300" }]
+      }
+    ],
+    "cleanUrls": true
+  }
+}
