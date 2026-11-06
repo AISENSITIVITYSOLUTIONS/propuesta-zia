@@ -385,6 +385,74 @@ table.tb .dim{color:var(--muted)}
 #s10 table.tb td{padding:5px 10px 5px 0}
 #s10 table.tb thead th{padding:0 10px 7px 0}
 
+/* ===== MODO DOCUMENTO (móvil y tablet vertical) ===== */
+@media (max-width:900px){
+  html.doc,html.doc body{overflow:auto;height:auto}
+  html.doc #fit{position:static;display:block;place-items:unset}
+  html.doc .deck{width:100%;height:auto;perspective:none;transform:none!important}
+  html.doc .rig{position:static;transform:none!important}
+  html.doc .scene{position:relative;inset:auto;width:100%;height:auto;min-height:0;
+    opacity:1!important;visibility:visible!important;pointer-events:auto;
+    transform:none!important;filter:none!important;transition:none;
+    padding:30px 18px 38px;border-bottom:1px solid rgba(255,255,255,.07);overflow:visible;
+    display:flex;flex-direction:column}
+  html.doc .top{flex-wrap:wrap;gap:10px;order:0}
+  html.doc .hero{order:1}
+  html.doc .stack{order:2}
+  html.doc .cover-meta{order:3}
+  html.doc .foot{order:9}
+  html.doc .scene.past{opacity:1!important}
+
+  /* decorado que no reflúye */
+  html.doc .ride,html.doc .conn,html.doc .floor{display:none}
+  html.doc .glowA,html.doc .glowB{opacity:.5}
+
+  /* rejillas a una columna */
+  html.doc .row.c2,html.doc .row.c3,html.doc .row.c4,html.doc .flow,html.doc .gov,html.doc .strip{grid-template-columns:1fr!important}
+  html.doc .row.c6{grid-template-columns:repeat(6,1fr)!important}
+  html.doc .scene div[style*="grid-template-columns"]{grid-template-columns:1fr!important}
+  html.doc .gscale,html.doc .grow2{grid-template-columns:1fr!important;gap:4px}
+  html.doc .gscale .in{display:none}
+  html.doc .cta,html.doc .dash{flex-direction:column;align-items:flex-start!important;gap:12px}
+  html.doc .scene div[style*="display:flex"][style*="justify-content:space-between"]{flex-wrap:wrap;gap:10px}
+
+  /* posiciones absolutas al flujo */
+  html.doc .scene > [style*="position:absolute"]{position:static!important;
+    left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;margin-top:22px}
+  html.doc .stack{position:static;width:100%;height:auto;display:flex;flex-direction:column;gap:12px;margin-top:24px}
+  html.doc .fslot{position:static;width:100%}
+  html.doc .fcard{width:100%;animation:none;transform:none!important}
+  html.doc .hero{margin-top:22px!important;max-width:none}
+  html.doc .cover-meta{position:static;display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:26px}
+  html.doc .foot{position:static;margin-top:26px;font-size:9px;gap:12px}
+  html.doc .tier.hero-t{transform:none}
+  html.doc .phone{width:100%;max-width:300px;margin:0 auto;transform:none}
+  html.doc .markwrap::before{display:none}
+
+  /* tipografía */
+  html.doc h1.t{font-size:36px!important;letter-spacing:-1px}
+  html.doc h2.t{font-size:26px!important;letter-spacing:-.6px}
+  html.doc .lede{font-size:14.5px!important;max-width:none!important}
+  html.doc .num{font-size:30px!important;letter-spacing:-1px}
+  html.doc .strip .num,html.doc .tier .num,html.doc #s03 .num{font-size:34px!important}
+  html.doc .kicker{font-size:10px;letter-spacing:1.6px}
+  html.doc .cta .big,html.doc .step .n{font-size:20px!important}
+  html.doc .g.pad,html.doc #s02 .pad,html.doc #s03 .pad,html.doc #s09 .pad,html.doc #s10 .pad{padding:18px 16px!important}
+  html.doc .pad-s,html.doc #s06 .pad-s,html.doc #s09 .pad-s{padding:15px 14px!important}
+  html.doc #s03 .row.c4 > .g,html.doc #s06 .row.c3 > .g{min-height:0}
+  html.doc .scene [style*="width:"][style*="px"]{max-width:100%}
+
+  /* tablas: desplazamiento horizontal dentro de su tarjeta */
+  html.doc .g{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  html.doc table.tb{font-size:10.4px;min-width:0;width:100%}
+  html.doc table.tb th,html.doc table.tb td{padding:6px 7px 6px 0;width:auto!important;overflow-wrap:break-word}
+  html.doc #s07 table.tb{min-width:420px}
+  html.doc .gantt{min-width:0}
+
+  /* entrada al hacer scroll */
+  html.doc .scene [data-a]{animation-duration:.8s}
+}
+
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.15s!important}
 }
@@ -757,7 +825,7 @@ table.tb .dim{color:var(--muted)}
 </section>
 
 <!-- ░░░░░░░░ 07 · PLAN POR FASES ░░░░░░░░ -->
-<section class="scene" data-dur="13000" data-name="07 · PLAN POR FASES" data-accent="blue">
+<section class="scene" id="s07" data-dur="13000" data-name="07 · PLAN POR FASES" data-accent="blue">
   <div class="top">
     <div class="kicker"><span class="kdot"></span>05 · PLAN POR FASES DESDE HOY</div>
     <div class="lock"><span class="mark sm" role="img" aria-label="NNI · Neural Network Initiative"></span><span class="sep"></span><span class="z">SISTEMA Z·IA</span></div>
@@ -1095,8 +1163,10 @@ table.tb .dim{color:var(--muted)}
 var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- FIT ---------- */
+var DOC = window.matchMedia('(max-width: 900px)').matches;
 var deck = document.getElementById('deck');
 function fit(){
+  if(DOC) return;
   var pad = 34, hud = 64;
   var s = Math.min((innerWidth - pad*2)/1600, (innerHeight - hud - pad)/900);
   deck.style.transform = 'scale(' + s.toFixed(4) + ')';
@@ -1320,6 +1390,31 @@ var AMB = (function(){
   }};
 })();
 
+/* ---------- MODO DOCUMENTO ---------- */
+if(DOC){
+  document.documentElement.classList.add('doc');
+  document.getElementById('intro').classList.add('gone');
+  hud.style.display = 'none';
+  sname.style.display = 'none';
+  deck.style.transform = 'none';
+  scenes.forEach(function(s){ s.classList.remove('past'); s.classList.add('active'); });
+  AMB.tint('blue');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting && !e.target.dataset.played){
+          e.target.dataset.played = '1';
+          replay(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    scenes.forEach(function(s){ io.observe(s); });
+  } else {
+    scenes.forEach(replay);
+  }
+  return;
+}
+
 /* ---------- START ---------- */
 document.getElementById('bStart').onclick = function(){
   document.getElementById('intro').classList.add('gone');
@@ -1329,7 +1424,7 @@ document.getElementById('bStart').onclick = function(){
   wake();
 };
 addEventListener('keydown', function(e){
-  if(!started && (e.code === 'Space' || e.code === 'Enter')){
+  if(!started && !DOC && (e.code === 'Space' || e.code === 'Enter')){
     e.preventDefault(); document.getElementById('bStart').onclick();
   }
 });
