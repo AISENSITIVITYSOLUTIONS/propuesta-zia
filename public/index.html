@@ -25,7 +25,9 @@ html,body{height:100%}
 body{
   margin:0; background:var(--ink); color:var(--text); font-family:var(--sans);
   overflow:hidden; -webkit-font-smoothing:antialiased;
+  overscroll-behavior:none; touch-action:none;
 }
+html{overflow:hidden;overscroll-behavior:none}
 canvas#amb{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
 .vig{position:fixed;inset:0;z-index:1;pointer-events:none;
   background:radial-gradient(130% 100% at 50% 40%,rgba(5,7,11,0) 38%,rgba(5,7,11,.72) 100%)}
@@ -35,9 +37,9 @@ canvas#amb{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block
 @keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-2%)}80%{transform:translate(3%,1%)}100%{transform:translate(0,0)}}
 
 /* ============ FIT / DECK ============ */
-#fit{position:fixed;inset:0;z-index:3;display:grid;place-items:center}
+#fit{position:fixed;inset:0;z-index:3}
 .deck{
-  width:1600px;height:900px;position:relative;transform-origin:50% 50%;
+  width:1600px;height:900px;position:absolute;left:0;top:0;transform-origin:0 0;
   perspective:1700px;perspective-origin:50% 46%;
 }
 .rig{position:absolute;inset:0;transform-style:preserve-3d;
@@ -339,6 +341,22 @@ table.tb .dim{color:var(--muted)}
 .chips i{width:22px;height:4px;border-radius:2px;background:rgba(255,255,255,.16);cursor:pointer;transition:all .22s}
 .chips i.on{background:var(--blue-l);box-shadow:0 0 10px var(--blue-l)}
 .chips i.done{background:rgba(143,176,255,.5)}
+.navbtn{position:fixed;top:50%;z-index:19;width:46px;height:46px;margin-top:-23px;border-radius:50%;
+  display:grid;place-items:center;cursor:pointer;border:1px solid var(--line);color:var(--text);
+  background:rgba(12,17,27,.62);backdrop-filter:blur(8px);opacity:0;transition:opacity .3s ease,transform .2s ease,background .2s ease}
+.navbtn:hover{background:rgba(26,34,52,.9);transform:scale(1.06)}
+.navbtn.l{left:18px}.navbtn.r{right:18px}
+.navbtn[disabled]{opacity:0!important;pointer-events:none}
+#hud.show ~ .navbtn{opacity:.85}
+#more{position:fixed;left:50%;bottom:74px;z-index:18;transform:translateX(-50%);
+  display:none;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:1.4px;color:var(--soft);
+  background:rgba(12,17,27,.82);border:1px solid var(--line);backdrop-filter:blur(8px);
+  pointer-events:none;animation:bob 1.9s ease-in-out infinite}
+#more.on{display:flex}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(4px)}}
+html.narrow .scene.scrolls::-webkit-scrollbar{width:3px}
+html.narrow .scene.scrolls::-webkit-scrollbar-thumb{background:rgba(143,176,255,.4);border-radius:2px}
 .sname{position:fixed;left:26px;bottom:62px;z-index:20;font-family:var(--mono);font-size:10px;
   letter-spacing:1.8px;color:var(--muted);opacity:0;transition:opacity .35s}
 #hud.show ~ .sname,.sname.show{opacity:1}
@@ -384,6 +402,65 @@ table.tb .dim{color:var(--muted)}
 #s10 .pad{padding:12px 22px}
 #s10 table.tb td{padding:5px 10px 5px 0}
 #s10 table.tb thead th{padding:0 10px 7px 0}
+
+/* ===== MODO ESTRECHO · una página por pantalla, reflujo a una columna ===== */
+html.narrow #fit{position:fixed;inset:0;display:block;place-items:unset}
+html.narrow .deck{width:100%;height:100%;perspective:none;transform:none!important}
+html.narrow .rig{position:absolute;inset:0;transform:none!important}
+html.narrow .scene{position:absolute;inset:0;width:100%;height:100%;padding:0;overflow:hidden;
+  transform:none!important;filter:none!important;transition:opacity .45s ease}
+html.narrow .scene.past{transform:none!important}
+html.narrow .scene.scrolls{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+html.narrow .fitwrap{transform-origin:top left;padding:26px 16px 76px;
+  display:flex;flex-direction:column;box-sizing:border-box}
+
+html.narrow .ride,html.narrow .conn,html.narrow .floor{display:none}
+html.narrow .glowA,html.narrow .glowB{opacity:.45}
+
+html.narrow .row.c2,html.narrow .row.c3,html.narrow .row.c4,
+html.narrow .flow,html.narrow .gov,html.narrow .strip{grid-template-columns:1fr!important}
+html.narrow .row.c6{grid-template-columns:repeat(6,1fr)!important}
+html.narrow .fitwrap div[style*="grid-template-columns"]{grid-template-columns:1fr!important}
+html.narrow .gscale,html.narrow .grow2{grid-template-columns:1fr!important;gap:4px}
+html.narrow .gscale .in{display:none}
+html.narrow .cta,html.narrow .dash{flex-direction:column;align-items:flex-start!important;gap:12px}
+
+html.narrow .fitwrap > [style*="position:absolute"]{position:static!important;
+  left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;margin-top:20px}
+html.narrow .stack{position:static;width:100%;height:auto;display:flex;flex-direction:column;gap:11px;margin-top:20px;order:2}
+html.narrow .fslot{position:static;width:100%}
+html.narrow .fcard{width:100%;animation:none;transform:none!important}
+html.narrow .hero{margin-top:20px!important;max-width:none;order:1}
+html.narrow .cover-meta{position:static;display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin-top:22px;order:3}
+html.narrow .top{flex-wrap:wrap;gap:10px;order:0}
+html.narrow .foot{position:static;margin-top:22px;font-size:9px;gap:12px;order:9}
+html.narrow .tier.hero-t{transform:none}
+html.narrow .phone{width:100%;max-width:290px;margin:0 auto;transform:none}
+html.narrow .markwrap::before{display:none}
+
+html.narrow h1.t{font-size:34px!important;letter-spacing:-1px}
+html.narrow h2.t{font-size:25px!important;letter-spacing:-.6px}
+html.narrow .lede{font-size:14px!important;max-width:none!important}
+html.narrow .num{font-size:29px!important;letter-spacing:-1px}
+html.narrow .strip .num,html.narrow .tier .num,html.narrow #s03 .num{font-size:32px!important}
+html.narrow .kicker{font-size:10px;letter-spacing:1.6px}
+html.narrow .cta .big,html.narrow .step .n{font-size:19px!important}
+html.narrow .g.pad{padding:16px 15px!important}
+html.narrow .pad-s{padding:14px 13px!important}
+html.narrow #s03 .row.c4 > .g,html.narrow #s06 .row.c3 > .g{min-height:0}
+html.narrow .fitwrap [style*="width:"][style*="px"]{max-width:100%}
+
+html.narrow table.tb{font-size:10.4px;min-width:0;width:100%}
+html.narrow table.tb th,html.narrow table.tb td{padding:6px 7px 6px 0;width:auto!important;overflow-wrap:break-word}
+html.narrow .scene [data-a]{animation-duration:.75s}
+html.narrow .row{gap:10px}
+html.narrow .fitwrap > *[style*="margin-top"]{margin-top:15px!important}
+html.narrow .fitwrap > h2.t,html.narrow .fitwrap > h1.t{margin-top:14px!important}
+html.narrow .fitwrap > .lede{margin-top:9px!important}
+html.narrow .fitwrap .gov{gap:9px 18px}
+html.narrow .fitwrap .tier ul{gap:6px;margin-top:11px;padding-top:11px}
+html.narrow .fitwrap .pil{gap:8px}
+html.narrow .glowA,html.narrow .glowB{display:none}
 
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.15s!important}
@@ -1066,14 +1143,17 @@ table.tb .dim{color:var(--muted)}
 
 </div></div></div>
 
+<button class="navbtn l" id="bL" title="Anterior (←)" aria-label="Página anterior"><svg width="15" height="15" viewBox="0 0 14 14" fill="currentColor"><path d="M10 1L4 7l6 6z"/></svg></button>
+<button class="navbtn r" id="bR" title="Siguiente (→)" aria-label="Página siguiente"><svg width="15" height="15" viewBox="0 0 14 14" fill="currentColor"><path d="M4 1l6 6-6 6z"/></svg></button>
+<div id="more">SIGUE EN ESTA PÁGINA ↓</div>
 <div class="sname" id="sname">01 · PORTADA</div>
 <div id="hud">
-  <button id="bPlay" title="Reproducir / pausar (espacio)"><svg id="icPlay" width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M3 1l9 6-9 6z"/></svg></button>
+  <button id="bPlay" title="Pase automático (P)"><svg id="icPlay" width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M3 1l9 6-9 6z"/></svg></button>
   <button id="bPrev" title="Anterior (←)"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M10 1L4 7l6 6z"/></svg></button>
   <button id="bNext" title="Siguiente (→)"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M4 1l6 6-6 6z"/></svg></button>
-  <div class="time" id="tCur">00:00</div>
+  <div class="time" id="tCur">01</div>
   <div class="track" id="track"><div class="el" id="el"></div></div>
-  <div class="time" id="tTot">00:00</div>
+  <div class="time" id="tTot">DE 11</div>
   <div class="chips" id="chips"></div>
   <button id="bFs" title="Pantalla completa (F)"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M1 1h5v2H3v3H1V1zm12 0v5h-2V3H8V1h5zM1 8h2v3h3v2H1V8zm10 0h2v5H8v-2h3V8z"/></svg></button>
 </div>
@@ -1083,9 +1163,9 @@ table.tb .dim{color:var(--muted)}
     <div class="markwrap" style="margin-bottom:26px"><span class="mark" role="img" aria-label="NNI" style="width:104px;height:104px;filter:drop-shadow(0 18px 40px rgba(0,0,0,.8)) drop-shadow(0 0 40px rgba(47,107,255,.35))"></span></div>
     <div class="mk">PROPUESTA EJECUTIVA</div>
     <h1>Sistema Comercial <span style="color:#8FB0FF">Z·IA</span></h1>
-    <p>Propuesta ejecutiva para Z e-Scooters México · Temporada alta 2026–2027.<br>Once escenas, dos minutos.</p>
-    <div class="play" id="bStart"><span class="tri"><svg width="11" height="11" viewBox="0 0 11 11"><path d="M2 0l8 5.5L2 11z"/></svg></span>Reproducir propuesta</div>
-    <div class="ihint">ESPACIO PAUSA · ← → NAVEGA · F PANTALLA COMPLETA</div>
+    <p>Propuesta ejecutiva para Z e-Scooters México · Temporada alta 2026–2027.<br>Once páginas. Avanza a tu ritmo.</p>
+    <div class="play" id="bStart"><span class="tri"><svg width="11" height="11" viewBox="0 0 11 11"><path d="M2 0l8 5.5L2 11z"/></svg></span>Abrir propuesta</div>
+    <div class="ihint">← → CAMBIA DE PÁGINA · F PANTALLA COMPLETA</div>
   </div>
 </div>
 
@@ -1094,14 +1174,55 @@ table.tb .dim{color:var(--muted)}
 'use strict';
 var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ---------- FIT ---------- */
+/* ---------- AJUSTE A LA PANTALLA ----------
+   Cada página entra completa: en formato ancho se escala el escenario de
+   1600x900; en pantallas estrechas el contenido reflúye a una columna y se
+   reduce hasta caber en el alto disponible. Nunca se recorta el pie.       */
 var deck = document.getElementById('deck');
-function fit(){
-  var pad = 34, hud = 64;
-  var s = Math.min((innerWidth - pad*2)/1600, (innerHeight - hud - pad)/900);
-  deck.style.transform = 'scale(' + s.toFixed(4) + ')';
+var HUD_H = 64, NARROW = false;
+
+function buildWraps(){
+  scenes.forEach(function(s){
+    if(s.firstElementChild && s.firstElementChild.classList.contains('fitwrap')) return;
+    var w = document.createElement('div');
+    w.className = 'fitwrap';
+    while(s.firstChild) w.appendChild(s.firstChild);
+    s.appendChild(w);
+  });
 }
-addEventListener('resize', fit); fit();
+
+function fitNarrow(){
+  var avail = innerHeight - HUD_H - 10;
+  scenes.forEach(function(s){
+    var w = s.firstElementChild;
+    if(!w || !w.classList.contains('fitwrap')) return;
+    w.style.transform = 'none';
+    w.style.width = '100%';
+    var h = w.scrollHeight;
+    var k = h > 0 ? Math.min(1, avail / h) : 1;
+    if(k < 0.82) k = 0.82;                 // piso de legibilidad: por debajo, la página se desplaza
+    w.style.transform = 'scale(' + k.toFixed(4) + ')';
+    w.style.width = (100 / k).toFixed(3) + '%';
+    s.classList.toggle('scrolls', h * k > avail + 2);
+  });
+}
+
+function fit(){
+  NARROW = innerWidth < 920 || (innerWidth / innerHeight) < 1.15;
+  document.documentElement.classList.toggle('narrow', NARROW);
+  if(NARROW){
+    buildWraps();
+    deck.style.transform = 'none';
+    fitNarrow();
+    return;
+  }
+  var s = Math.min((innerWidth - 44) / 1600, (innerHeight - HUD_H - 18) / 900);
+  var x = Math.max(0, (innerWidth - 1600 * s) / 2);
+  var y = Math.max(0, (innerHeight - HUD_H - 900 * s) / 2);
+  deck.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px) scale(' + s.toFixed(4) + ')';
+}
+var fitT;
+addEventListener('resize', function(){ clearTimeout(fitT); fitT = setTimeout(fit, 80); });
 
 /* ---------- SCENES ---------- */
 var scenes = [].slice.call(document.querySelectorAll('.scene'));
@@ -1109,6 +1230,7 @@ var durs = scenes.map(function(s){ return parseInt(s.dataset.dur, 10) || 10000; 
 var total = durs.reduce(function(a,b){ return a+b; }, 0);
 var offs = []; (function(){ var t=0; durs.forEach(function(d){ offs.push(t); t+=d; }); })();
 var i = 0, el = 0, playing = false, last = 0, started = false;
+fit();
 
 var rig    = document.getElementById('rig');
 var bar    = document.getElementById('el');
@@ -1134,7 +1256,7 @@ function fmt(ms){
   var t = Math.max(0, Math.round(ms/1000));
   return String(Math.floor(t/60)).padStart(2,'0') + ':' + String(t%60).padStart(2,'0');
 }
-tTot.textContent = fmt(total);
+tTot.textContent = 'DE ' + scenes.length;
 
 /* counters */
 function runCounters(scene){
@@ -1205,14 +1327,32 @@ function go(k, seek){
     c.classList.toggle('on', n === k);
     c.classList.toggle('done', n < k);
   });
+  if(NARROW) fitNarrow();
+  var bl = document.getElementById('bL'), br = document.getElementById('bR');
+  if(bl) bl.disabled = (k === 0);
+  if(br) br.disabled = (k === scenes.length - 1);
+  scenes[k].scrollTop = 0;
   replay(scenes[k]);
   tick(true);
+  setTimeout(updateMore, 60);
 }
+
+var moreEl = document.getElementById('more');
+function updateMore(){
+  var sc = scenes[i];
+  var on = !!(NARROW && sc && sc.classList.contains('scrolls') &&
+              sc.scrollTop + sc.clientHeight < sc.scrollHeight - 24);
+  moreEl.classList.toggle('on', on);
+}
+scenes.forEach(function(sc){ sc.addEventListener('scroll', updateMore, { passive:true }); });
+
+function next(){ if(i < scenes.length - 1) go(i + 1); }
+function prev(){ if(i > 0) go(i - 1); }
 
 function tick(force){
   var p = (offs[i] + Math.min(el, durs[i])) / total;
   bar.style.width = (p*100).toFixed(2) + '%';
-  tCur.textContent = fmt(offs[i] + Math.min(el, durs[i]));
+  tCur.textContent = String(i + 1).padStart(2, '0');
 }
 
 function loop(ts){
@@ -1252,13 +1392,46 @@ track.onclick = function(e){
 };
 addEventListener('keydown', function(e){
   if(!started) return;
-  if(e.code === 'Space'){ e.preventDefault(); setPlay(!playing); }
-  else if(e.code === 'ArrowRight' || e.code === 'PageDown'){ e.preventDefault(); go(i+1); }
-  else if(e.code === 'ArrowLeft'  || e.code === 'PageUp'){ e.preventDefault(); go(i-1); }
+  if(e.code === 'ArrowRight' || e.code === 'PageDown' || e.code === 'Space' || e.code === 'Enter'){
+    e.preventDefault(); setPlay(false); next();
+  }
+  else if(e.code === 'ArrowLeft' || e.code === 'PageUp' || e.code === 'Backspace'){
+    e.preventDefault(); setPlay(false); prev();
+  }
   else if(e.key === 'f' || e.key === 'F'){ document.getElementById('bFs').onclick(); }
+  else if(e.key === 'p' || e.key === 'P'){ setPlay(!playing); }
   else if(e.key === 'Home'){ go(0); }
   else if(e.key === 'End'){ go(scenes.length-1); }
+  wake();
 });
+
+/* botones laterales */
+document.getElementById('bL').onclick = function(e){ e.stopPropagation(); setPlay(false); prev(); wake(); };
+document.getElementById('bR').onclick = function(e){ e.stopPropagation(); setPlay(false); next(); wake(); };
+
+/* el scroll nunca cambia de página: solo desplaza dentro de una página que lo necesite */
+addEventListener('wheel', function(e){
+  var sc = scenes[i];
+  if(NARROW && sc && sc.classList.contains('scrolls')) return;   // desplazamiento interno
+  e.preventDefault();
+}, { passive:false });
+
+/* gesto explícito: deslizar en horizontal */
+var tx = 0, ty = 0, tt = 0;
+addEventListener('touchstart', function(e){
+  if(e.touches.length !== 1) return;
+  tx = e.touches[0].clientX; ty = e.touches[0].clientY; tt = Date.now();
+}, { passive:true });
+addEventListener('touchend', function(e){
+  if(!e.changedTouches.length) return;
+  var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+  if(Date.now() - tt > 900) return;
+  if(Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.6){
+    setPlay(false);
+    if(dx < 0) next(); else prev();
+    wake();
+  }
+}, { passive:true });
 
 /* HUD autohide + parallax */
 var hideT;
@@ -1267,11 +1440,11 @@ function wake(){
   clearTimeout(hideT);
   hideT = setTimeout(function(){
     if(playing){ hud.classList.remove('show'); sname.classList.remove('show'); }
-  }, 2800);
+  }, 3600);
 }
 addEventListener('mousemove', function(e){
   wake();
-  if(RM) return;
+  if(RM || NARROW) return;
   var x = (e.clientX/innerWidth - .5), y = (e.clientY/innerHeight - .5);
   rig.style.transform = 'rotateY(' + (x*2.4).toFixed(2) + 'deg) rotateX(' + (-y*1.7).toFixed(2) + 'deg)';
 });
@@ -1324,8 +1497,9 @@ var AMB = (function(){
 document.getElementById('bStart').onclick = function(){
   document.getElementById('intro').classList.add('gone');
   started = true;
+  fit();
   go(0);
-  setPlay(true);
+  setPlay(false);
   wake();
 };
 addEventListener('keydown', function(e){
